@@ -33,7 +33,7 @@ namespace WebEndereco
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            string connection = @"Server=(localdb)\mssqllocaldb;Database=AppCep;Trusted_Connection=True;ConnectRetryCount=0";
+            string connection = @"Server=(localdb)\mssqllocaldb;Database=WebEndereco;Trusted_Connection=True;ConnectRetryCount=0";
 
             services.AddDbContext<Context>(options => options.UseSqlServer(connection));
 
