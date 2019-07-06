@@ -49,8 +49,8 @@ namespace WebEndereco.Controllers
         public IActionResult List()
 
         {
-            List<Endereco> lista = new List<Endereco>();
-            return View("Index");
+            _context.Enderecos.ToList();
+            return List();
 
         }
 

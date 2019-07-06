@@ -22,6 +22,7 @@ namespace WebEndereco.Models
         public string unidade { get; set; }
         public string ibge { get; set; }
         public string gia { get; set; }
+        public int Id { get; internal set; }
     }
     
 }

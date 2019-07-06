@@ -40,7 +40,7 @@ namespace WebEndereco
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Context context)
         {
             if (env.IsDevelopment())
             {
@@ -48,20 +48,25 @@ namespace WebEndereco
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseCookiePolicy();
+            app.UseMvc();
 
-            app.UseMvc(routes =>
+            if (!context.Enderecos.Any())
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Endereco}/{action=Index}/{id?}");
-            });
+                context.Enderecos.AddRange(new List<Endereco>()
+                {
+                        new Endereco(){cep= "8173000" },
+                        new Endereco(){cep= "82600030" },
+                        new Endereco(){cep= "80000010" },
+
+                });
+
+                context.SaveChanges();
+            }
         }
+
     }
 }
