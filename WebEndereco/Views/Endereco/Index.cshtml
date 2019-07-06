@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Consultar e Cadastra CEP</h2>
+
+<div style="margin-top:30px" class="container">
+    <form asp-action="ConsultarEndereco">
+
+        <div>
+            <label>CEP:</label>
+            <input type="text" name="CEP" value="" />
+        </div>
+        <input name="btnCadastrar" type="submit" value="Consultar e Cadastrar" class="btn btn-success" />
+    </form>
+</div>
