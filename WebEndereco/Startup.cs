@@ -33,14 +33,16 @@ namespace WebEndereco
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            string connection = @"Server=(localdb)\mssqllocaldb;Database=WebEndereco;Trusted_Connection=True;ConnectRetryCount=0";
+            string connection = @"Server=(localdb)\mssqllocaldb;Database=AppCep;Trusted_Connection=True;ConnectRetryCount=0";
+
             services.AddDbContext<Context>(options => options.UseSqlServer(connection));
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Context context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -48,25 +50,20 @@ namespace WebEndereco
             }
             else
             {
+                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseStaticFiles();
+            app.UseCookiePolicy();
 
-            if (!context.Enderecos.Any())
+            app.UseMvc(routes =>
             {
-                context.Enderecos.AddRange(new List<Endereco>()
-                {
-                        new Endereco(){cep= "8173000" },
-                        new Endereco(){cep= "82600030" },
-                        new Endereco(){cep= "80000010" },
-
-                });
-
-                context.SaveChanges();
-            }
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=EnderecoAPI}/{action=Index}/{id?}");
+            });
         }
-
     }
 }

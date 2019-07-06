@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using WebEndereco.Models;
 
 namespace WebEndereco.Controllers
 {
-   
-    public class EnderecoAPIController : ControllerBase
+
+
+    public class EnderecoAPIController : Controller
     {
+
         private readonly Context _context;
 
         public EnderecoAPIController(Context context)
@@ -18,36 +22,21 @@ namespace WebEndereco.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public IEnumerable<Endereco> Get()
+        public IActionResult Index()
         {
-            return _context.Enderecos.ToList();
+            return View(_context.Enderecos.ToList());
         }
 
-        [HttpGet("{id}", Name = "enderecoCriado")]
-        public IActionResult GetById(int id)
+        public IActionResult BuscaCep()
         {
-            var cat = _context.Enderecos.FirstOrDefault(x => x.EnderecoID == id);
-            if (cat == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(cat);
+            var cep = HttpContext.Request.Query["cep"].ToString();
+            WebClient client = new WebClient();
+            string json = client.DownloadString("http://viacep.com.br/ws/" + cep + "/json/");
+            Endereco endereco = JsonConvert.DeserializeObject<Endereco>(json);
+            _context.Enderecos.Add(endereco);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public IActionResult Post([FromBody] Endereco cat)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Enderecos.Add(cat);
-                _context.SaveChanges();
-                return new CreatedAtRouteResult("enderecoCriado", new { id = cat.Id }, cat);
-            }
-
-            return BadRequest(ModelState);
-
-        }
     }
 }
